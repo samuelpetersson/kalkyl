@@ -1,11 +1,5 @@
-# kalkyl
-Resolve calculations with dependencies
+var {calc, load, when} = require('./index')()
 
-
-### Examples
-
-```javascript
-var {calc, when, load} = kalkyl()
 
 calc('total', {
 	wants: ['items'],
@@ -17,11 +11,16 @@ calc('average', {
 	solve: ({total, items}) => total / items.length
 })
 
-when('total', total => { console.log('Total is now', total) })
 
-when('average', average => { console.log('Average is now', average) })
+
+when('total', total => { console.log('Total is', total) })
+
+when('average', average => { console.log('Average is', average) })
+
 
 console.log(load({items: [10, 30]})) //{ items: [ 10, 30 ], total: 40, average: 20 }
 
 console.log(load({items: [10, 5, 5, 10, 10]})) //{ items: [ 10, 5, 5, 10, 10 ], total: 40, average: 8 }
-```
+
+
+

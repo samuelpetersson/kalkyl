@@ -1,0 +1,19 @@
+{
+  "name": "kalkyl",
+  "version": "1.0.0",
+  "description": "Resolve calculations with dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelpetersson/kalkyl.git"
+  },
+  "author": "Samuel Petersson <samuelpetersson@pm.me>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samuelpetersson/kalkyl/issues"
+  },
+  "homepage": "https://github.com/samuelpetersson/kalkyl#readme"
+}
