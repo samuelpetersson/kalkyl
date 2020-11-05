@@ -60,24 +60,41 @@ var kalkyl = (function() {
 		return true
 	}
 
+	var place = (into, path, value) => {
+		var comps = path.split('.')
+		var field = comps.pop()
+		while(comps.length > 0) {
+			var cur = comps.shift()
+			into = into[cur] || (into[cur] = {})
+		}
+		into[field] = value
+	}
+
+	var expand = function(object) {
+		var result = {}
+		for(var name in object) {
+			place(result, name, object[name])
+		}
+		return result
+	}
+
 	return function() {
 
 		var calcs = {}
 		var views = []
 
 		var prepare = function(args, value, result) {
+			value = expand(value)
 			for(var name in value) {
 				var calc = calcs[name]
-				if(!calc) {
-					calc = {solve: function(data, args, prev) { return args !== undefined ? args : prev }}
-					calcs[name] = calc
-				}
-				if(value[name] != null && calc.remap) {
-					result = prepare(args, calc.remap(value[name]), result)
-				}
-				else {
-					args[name] = value[name]
-					result = true
+				if(calc) {
+					if(value[name] != null && calc.remap) {
+						result = prepare(args, calc.remap(value[name]), result)
+					}
+					else {
+						args[name] = value[name]
+						result = true
+					}
 				}
 			}
 			return result == true
@@ -93,7 +110,7 @@ var kalkyl = (function() {
 			var calc = calcs[name]
 			var flag = context.flag
 
-			if(!calc) {
+			if(!calc || !calc.solve) {
 				flag[name] = false
 			}
 
@@ -139,17 +156,21 @@ var kalkyl = (function() {
 				var args = {}
 
 				if(value && !prepare(args, value)) {
-					return
+					return state.data
 				}
 
 				var context = {data:clone(state.data || {}), diff:{}, args:args, flag:{}}
 				var queue = Object.keys(args)
 				
 				if(queue.length > 0 && !resolve(context, queue)) {
-					return
+					return state.data
 				}
 
 				resolve(context, Object.keys(calcs))
+
+				if(Object.keys(context.diff) == 0) {
+					return state.data
+				}
 
 				var data = clone(context.data)
 				
